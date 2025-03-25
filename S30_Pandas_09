@@ -1,0 +1,65 @@
+# Pandas_09
+
+# 511. Game Play Analysis I_ Solution_Q1
+
+import pandas as pd
+
+def game_analysis(activity: pd.DataFrame) -> pd.DataFrame:
+    first_login_dict = {}
+
+    for i in range(len(activity)):
+        p_id = activity['player_id'][i]
+        e_date = activity['event_date'][i]
+
+        if p_id not in first_login_dict or e_date < first_login_dict[p_id]:
+            first_login_dict[p_id] = e_date
+
+    result = []
+    for key, value in first_login_dict.items():
+        result.append([key, value])
+
+    return pd.DataFrame(result, columns=['player_id', 'first_login'])
+
+#Alternative1
+
+import pandas as pd
+
+def game_analysis(activity: pd.DataFrame) -> pd.DataFrame:
+    activity= activity.groupby(['player_id'])['event_date'].min().reset_index()
+    return activity.rename(columns= {'event_date': 'first_login'})
+
+______________________________________________________________________________________________________________________________________
+
+# 586. Customer Placing the Largest Number of Orders_ Solution_Q2
+
+import pandas as pd
+
+def largest_orders(orders: pd.DataFrame) -> pd.DataFrame:
+    dict={}
+    max=0
+    for i in range(len(orders)):
+        c_number= orders['customer_number'][i]
+        if c_number not in dict:
+            dict[c_number]=0
+        dict[c_number] += 1
+        if dict[c_number] > max:
+            max= dict[c_number]
+    result= []
+    for key, value in dict.items():
+        if value==max:
+            result.append(key)
+            break
+    return pd.DataFrame(result, columns= ['customer_number'])
+
+#Alternative1
+
+import pandas as pd
+
+def largest_orders(orders: pd.DataFrame) -> pd.DataFrame:
+
+    df = orders.groupby('customer_number')['order_number'].count().reset_index()
+    df.sort_values(by='order_number', ascending=False, inplace=True)
+    return df[['customer_number']][0:1]
+
+______________________________________________________________________________________________________________________________________
+
